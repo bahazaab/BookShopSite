@@ -11,6 +11,7 @@ class OrderItem extends Model
 
     protected $fillable = [
         "order_id",
+        "cart_id",
         "book_id",
         "quantity"
     ];
@@ -41,7 +42,7 @@ class OrderItem extends Model
         $discountedPrice = self::discountedPrice($basePrice, $discountRate);
 
         // Determine if quantity discount applies
-        if ($orderQuantity >= $discountQuantityThreshold) {
+        if ($orderQuantity >= $discountQuantityThreshold && $discountQuantityThreshold!=0) {
             // Calculate total price with quantity discount
             $unitsNumberOnQuantityDiscount = (int)($orderQuantity / $discountQuantityThreshold) * $discountQuantityThreshold;
             $remainingUnits = $orderQuantity % $discountQuantityThreshold;

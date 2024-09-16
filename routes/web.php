@@ -36,6 +36,7 @@ $dashboardMiddleware = [
 // test DB connection
 Route::view('/test-database', 'test-database')->middleware($dashboardMiddleware);
 
+
 /*** dashboard ***/
 Route::middleware($dashboardMiddleware)
     ->prefix('dashboard')->name('dashboard.')->group(function () {
@@ -73,31 +74,6 @@ Route::middleware($dashboardMiddleware)
 
 Route::view("/", 'pages.public.welcome')->name('public.');
 
-Route::get('/cart', function () {
-    $cart_total=Cart::getTotal();
-    return view('pages.public.shoping-cart',compact('cart_total'));
-})->name('public.cart');
-
-Route::get('/cart/index', [CartController::class,'index'])->name('public.cart.index');
-
-Route::delete('/cart/{item}', [CartController::class,'destroy'])->name('public.cart.destroy');
-
-Route::get('/checkout', function () {
-
-    return view('pages.public.checkout');
-})->name('public.checkout');
-
-Route::get('/contact', function () {
-
-    return view('pages.public.contact');
-})->name('public.contact');
-
-Route::get('/details/{book}', function (Book $book) {
-    return view('pages.public.shop-details',compact('book'));
-})->name('public.details');
-
-Route::post('/details/{book}', [CartController::class,'store'])->name('public.carts.store');
-
 Route::get('/grid', function () {
     if (request('search')) {
         $searchTerm = request('search');
@@ -110,3 +86,38 @@ Route::get('/grid', function () {
 
     return view('pages.public.shop-grid', compact('books', 'categories', 'discounted_books'));
 })->name('public.grid');
+
+Route::get('/details/{book}', function (Book $book) {
+    return view('pages.public.shop-details', compact('book'));
+})->name('public.details');
+
+Route::post('/details/{book}', [CartController::class, 'store'])->name('public.carts.store');
+
+Route::get('/cart', function () {
+    $cart_total = 0;
+    if (Auth::user() != null && Auth::user()->cart != null) {
+        $cart_total = Cart::getTotal();
+    }
+    return view('pages.public.shoping-cart', compact('cart_total'));
+})->name('public.cart');
+
+Route::get('/cart/index', [CartController::class, 'index'])->name('public.cart.index');
+
+Route::delete('/cart/delete', [CartController::class, 'destroy'])->name('public.cart.destroy');
+Route::delete('/cart/{item}', [CartController::class, 'deleteItem'])->name('public.cart.item.destroy');
+
+Route::get('/checkout', function () {
+    $cartItems = Auth::user()->cart->items;
+    $total = Auth::user()->cart->getTotal();
+    return view('pages.public.checkout', compact('cartItems', 'total'));
+})->name('public.checkout');
+
+Route::get('/contact', function () {
+
+    return view('pages.public.contact');
+})->name('public.contact');
+
+Route::get('/about', function () {
+
+    return view('pages.public.contact');
+})->name('public.about');

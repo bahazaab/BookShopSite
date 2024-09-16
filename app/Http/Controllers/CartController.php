@@ -6,6 +6,9 @@ use App\Http\Requests\StoreCartRequest;
 use App\Http\Requests\UpdateCartRequest;
 use App\Models\Book;
 use App\Models\Cart;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Stmt\TryCatch;
 
@@ -31,22 +34,33 @@ class CartController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreCartRequest $request,Book $book)
+    public function store(StoreCartRequest $request, Book $book)
     {
-        $attributes=[
-            'user_id'=>Auth::user()->id,
-            'book_id'=> $book->id,
-            'quantity'=>$request->quantity
+        if(Auth::user()==null){
+            return redirect()->route('login');
+        }
+
+        if (Auth::user()->hasCart()) {
+            try {
+                Cart::create(['user_id' => Auth::user()->id]);
+            } catch (\Exception $e) {
+                return redirect()->route('public.details', $book)->withErrors($e->getMessage());
+            }
+        }
+
+        $attributes = [
+            'order_id' => Order::getNextID(),
+            'cart_id' => Auth::user()->cart->id,
+            'book_id' => $book->id,
+            'quantity' => $request->quantity
         ];
 
         try {
-            Cart::create($attributes);
-        } catch (\Exception $e) {
-            return redirect()->route('public.details',$book)->withErrors($e->getMessage());
+            OrderItem::create($attributes);
+        } catch (Exception $e) {
+            throw new Exception('Something went wrong :' . $e->getMessage());
         }
-        
-return redirect()->route('public.grid');
-        
+        return redirect()->route('public.grid')->with('success', 'item added');
     }
 
     /**
@@ -73,12 +87,30 @@ return redirect()->route('public.grid');
         //
     }
 
+    public function deleteItem(string $order_item)
+    {
+        try {
+            $orderItem = OrderItem::findOrFail($order_item);
+            $orderItem->delete();
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => $e->getMessage(),
+            ]);
+        }
+
+        return response()->json([
+            "message" => "Item $order_item deleted successfully",
+            "orderItems" => Cart::getItems(),
+        ]);
+    }
+
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy()
     {
-        $cart=Cart::findOrFail($id);
+        $cart = Auth::user()->cart;
         try {
             $cart->delete();
         } catch (\Exception $e) {
@@ -88,7 +120,7 @@ return redirect()->route('public.grid');
         }
 
         return response()->json([
-            "message" => "Item deleted successfully",
+            "message" => "Cart deleted successfully",
             "orderItems" => Cart::getItems(),
         ]);
     }

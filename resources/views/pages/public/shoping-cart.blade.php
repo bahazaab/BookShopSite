@@ -71,92 +71,96 @@
     </section>
     <!-- Breadcrumb Section End -->
 
-    <!-- Shoping Cart Section Begin -->
-    <section class="shoping-cart spad">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="shoping__cart__table">
-                        <x-alpain-layout>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th class="shoping__product">Products</th>
-                                    <th>Price</th>
-                                    <th>Discount</th>
-                                    <th>Quantity Discount</th>
-                                    <th>Quantity</th>
-                                    <th>Total</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody x-init="indexItems('{{ route('public.cart.index') }}')">
-                                    <template x-for="item in orderItems">
+    @if (Auth::user() != null)
+        <!-- Shoping Cart Section Begin -->
+        <section class="shoping-cart spad">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="shoping__cart__table">
+                            <x-alpain-layout>
+                                <table>
+                                    <thead>
                                         <tr>
-                                            <td class="shoping__cart__item">
-                                                <img :src="item.image_url" alt>
-                                                <h5 x-text="item.bookName"></h5>
-                                            </td>
-                                            <td class="shoping__cart__price" x-text="'$'+item.bookPrice">
-                                            </td>
-                                            <td class="shoping__cart__price"x-text="item.bookDiscount+'%'">
-                                            </td>
-                                            <td class="shoping__cart__price" x-text="item.bookQuantityDiscount+'% per '+item.bookQuantityForDiscount">
-                                            </td>
-                                            <td class="shoping__cart__quantity">
-                                                <div class="quantity">
-                                                    <div class="pro-qty">
-                                                        <input type="text" x-model="item.quantity" readonly/>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="shoping__cart__total" x-text="'$'+item.total">
-                                            </td>
-                                            <td class="shoping__cart__item__close" x-data>
-                                                <button type="button" class="icon_close"
-                                                    x-on:click="deleteItem('{{ route('public.cart') }}',item.id )"></button>
-                                            </td>
+                                            <th class="shoping__product">Products</th>
+                                            <th>Price</th>
+                                            <th>Discount</th>
+                                            <th>Quantity Discount</th>
+                                            <th>Quantity</th>
+                                            <th>Total</th>
+                                            <th></th>
                                         </tr>
-                                    </template>
-                            </tbody>
-                        </table>
-                    </x-alpain-layout>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="shoping__cart__btns">
-                        <a href="{{ route('public.grid') }}" class="primary-btn cart-btn">CONTINUE
-                            SHOPPING</a>
-                        <a href="#" class="primary-btn cart-btn cart-btn-right"><span class="icon_loading"></span>
-                            Upadate Cart</a>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="shoping__continue">
-                        <div class="shoping__discount">
-                            <h5>Discount Codes</h5>
-                            <form action="#">
-                                <input type="text" placeholder="Enter your coupon code">
-                                <button type="submit" class="site-btn">APPLY
-                                    COUPON</button>
-                            </form>
+                                    </thead>
+                                    <tbody x-init="indexItems('{{ route('public.cart.index') }}')">
+                                        <template x-for="item in orderItems">
+                                            <tr>
+                                                <td class="shoping__cart__item">
+                                                    <img :src="item.image_url" alt>
+                                                    <h5 x-text="item.bookName"></h5>
+                                                </td>
+                                                <td class="shoping__cart__price" x-text="'$'+item.bookPrice">
+                                                </td>
+                                                <td class="shoping__cart__price"x-text="item.bookDiscount+'%'">
+                                                </td>
+                                                <td class="shoping__cart__price"
+                                                    x-text="item.bookQuantityDiscount+'% per '+item.bookQuantityForDiscount">
+                                                </td>
+                                                <td class="shoping__cart__quantity">
+                                                    <div class="quantity">
+                                                        <div class="pro-qty">
+                                                            <input type="text" x-model="item.quantity" readonly />
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="shoping__cart__total" x-text="'$'+item.total">
+                                                </td>
+                                                <td class="shoping__cart__item__close" x-data>
+                                                    <button type="button" class="icon_close"
+                                                        x-on:click="deleteItem('{{ route('public.cart') }}',item.id )"></button>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </x-alpain-layout>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="shoping__checkout">
-                        <h5>Cart Total</h5>
-                        <ul>
-                            <li>Subtotal <span>$454.98</span></li>
-                            <li>Total <span>${{ $cart_total}}</span></li>
-                        </ul>
-                        <a href="{{ route('public.checkout') }}" class="primary-btn">PROCEED TO CHECKOUT</a>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="shoping__cart__btns">
+                            <a href="{{ route('public.grid') }}" class="primary-btn cart-btn">CONTINUE
+                                SHOPPING</a>
+                            <a href="#" class="primary-btn cart-btn cart-btn-right"><span
+                                    class="icon_loading"></span>
+                                Upadate Cart</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="shoping__continue">
+                            <div class="shoping__discount">
+                                <h5>Discount Codes</h5>
+                                <form action="#">
+                                    <input type="text" placeholder="Enter your coupon code">
+                                    <button type="submit" class="site-btn">APPLY
+                                        COUPON</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="shoping__checkout">
+                            <h5>Cart Total</h5>
+                            <ul>
+                                <li>Subtotal <span>$454.98</span></li>
+                                <li>Total <span>${{ $cart_total }}</span></li>
+                            </ul>
+                            <a href="{{ route('public.checkout') }}" class="primary-btn">PROCEED TO CHECKOUT</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-    <!-- Shoping Cart Section End -->
+        </section>
+        <!-- Shoping Cart Section End -->
+    @endif
 </x-public-layout>

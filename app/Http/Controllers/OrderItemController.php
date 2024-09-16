@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOrderItemRequest;
 use App\Http\Requests\UpdateOrderItemRequest;
 use App\Models\Book;
+use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Exception;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Auth;
 
 class OrderItemController extends Controller
 {
+    public $order_id = Order::getNextID();
     /**
      * Display a listing of the resource.
      */
@@ -63,7 +67,7 @@ class OrderItemController extends Controller
             OrderItem::create($attributes);
         } catch (Exception $e) {
             throw new Exception('Something went wrong :' . $e->getMessage());
-        } 
+        }
         //return redirect()->route('dashboard.orders.create')->with('success', 'item added');
         return response()->json([
             'message' => 'item submitted successfully',

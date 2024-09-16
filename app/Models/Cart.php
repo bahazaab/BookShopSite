@@ -13,13 +13,16 @@ class Cart extends Model
 
     public $fillable = [
         "user_id",
-        "book_id",
-        "quantity"
     ];
 
     public function book()
     {
         return $this->belongsTo(Book::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 
     public static function discountedPrice($unitPrice, $discountRate)
@@ -29,7 +32,7 @@ class Cart extends Model
         return $discountedPrice;
     }
 
-    public function getItemTotal($price, $discount, $quantity, $quantity_discount, $quantity_for_discount)
+   /*  public function getItemTotal($price, $discount, $quantity, $quantity_discount, $quantity_for_discount)
     {
 
         // Retrieve product and order details
@@ -64,12 +67,12 @@ class Cart extends Model
 
         // Return total price rounded to three decimal places
         return round($total, 3);
-    }
+    } */
 
     public static function getItems()
     {
         $cart_items = [];
-        foreach (Cart::where('user_id', Auth::user()->id)->get() as $item) {
+        foreach (OrderItem::where('cart_id', Auth::user()->cart->id)->get() as $item) {
             //$total = ($item->book->price * (1 - $item->book->discount * 0.01)) * $item->quantity;
             $cart_items[] = [
                 "id" => $item->id,
@@ -80,7 +83,7 @@ class Cart extends Model
                 "bookDiscount" => $item->book->discount,
                 "bookQuantityDiscount" => $item->book->quantity_discount,
                 "bookQuantityForDiscount" => $item->book->quantity_for_discount,
-                "total" => $item->getItemTotal(
+                "total" => $item->getTotal(
                     $item->book->price,
                     $item->book->discount,
                     $item->quantity,
@@ -97,8 +100,8 @@ class Cart extends Model
     {
         $items_total = 0;
         $discount = 0;
-        foreach (Cart::all()->where('user_id', Auth::user()->id) as $item) {
-            $items_total += $item->getItemTotal(
+        foreach (OrderItem::where('cart_id', Auth::user()->cart->id)->get() as $item) {
+            $items_total += $item->getTotal(
                 $item->book->price,
                 $item->book->discount,
                 $item->quantity,

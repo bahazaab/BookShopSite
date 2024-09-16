@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Book;
+use App\Models\Cart;
 use App\Models\Order;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,9 +20,10 @@ class OrderItemFactory extends Factory
     public function definition(): array
     {
         return [
-            "order_id"=> Order::all('id')->random(),
-            "book_id"=> Book::all('id')->random(),
-            "quantity"=> $this->faker->numberBetween(1,11)
+            "order_id" => Order::all('id')->random(),
+            "cart_id" => Cart::all('id')->random(),
+            "book_id" => Book::all('id')->random(),
+            "quantity" => $this->faker->numberBetween(1, 11)
         ];
     }
 }

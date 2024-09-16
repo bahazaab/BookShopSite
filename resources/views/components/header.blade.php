@@ -7,7 +7,16 @@
     <div class="humberger__menu__cart">
         <ul>
             <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
-            <li><a href="{{ route('public.cart') }}"><i class="fa fa-shopping-bag"></i> <span>3</span></a></li>
+            <li><a href="{{ route('public.cart') }}"><i class="fa fa-shopping-bag"></i>
+                    @if (Auth::user() != null && Auth::user()->cart !== null)
+                        @if (Auth::user()->cart->items->count() > 0)
+                            <span>
+                                {{ Auth::user()->cart->items->count() }}
+                            </span>
+                        @endif
+                    @endif
+                </a>
+            </li>
         </ul>
         <div class="header__cart__price">item: <span>$150.00</span></div>
     </div>
@@ -27,8 +36,16 @@
     </div>
     <nav class="humberger__menu__nav mobile-menu">
         <ul>
-            <li class="active"><a href="{{ route('public.') }}">Home</a></li>
-            <li><a href="{{ route('public.grid') }}">Shop</a></li>
+            <li class="{{ Route::is('public.') ? 'active' : '' }}"><a href="{{ route('public.') }}">Home</a></li>
+            <li
+                class="{{ Route::is('public.grid') |
+                Route::is('public.details') |
+                Route::is('public.cart') |
+                Route::is('public.checkout')
+                    ? 'active'
+                    : '' }}">
+                <a href="{{ route('public.grid') }}">Shop</a>
+            </li>
             <li><a href="#">Pages</a>
                 <ul class="header__menu__dropdown">
                     <li><a href="{{-- route('public.details') --}}">Shop Details</a></li>
@@ -36,8 +53,10 @@
                     <li><a href="{{ route('public.checkout') }}">Check Out</a></li>
                 </ul>
             </li>
-            <li><a href="{{ route('public.contact') }}">About</a></li>
-            <li><a href="{{ route('public.contact') }}">Contact</a></li>
+            <li class="{{ Route::is('public.about') ? 'active' : '' }}"><a href="{{ route('public.about') }}">About</a>
+            </li>
+            <li class="{{ Route::is('public.contact') ? 'active' : '' }}"><a
+                    href="{{ route('public.contact') }}">Contact</a></li>
         </ul>
     </nav>
     <div id="mobile-menu-wrap"></div>
@@ -115,17 +134,29 @@
             <div class="col-lg-6">
                 <nav class="header__menu">
                     <ul>
-                        <li class="active"><a href="{{ route('public.') }}">Home</a></li>
-                        <li><a href="{{ route('public.grid') }}">Shop</a></li>
+                        <li class="{{ Route::is('public.') ? 'active' : '' }}"><a href="{{ route('public.') }}"><a
+                                    href="{{ route('public.') }}">Home</a></li>
+                        <li
+                            class="{{ Route::is('public.grid') |
+                            Route::is('public.details') |
+                            Route::is('public.cart') |
+                            Route::is('public.checkout')
+                                ? 'active'
+                                : '' }}">
+                            <a href="{{ route('public.grid') }}">Shop</a>
+                        </li>
                         <li><a href="#">Pages</a>
                             <ul class="header__menu__dropdown">
                                 <li><a href="{{-- route('public.details') --}}">Shop Details</a></li>
                                 <li><a href="{{ route('public.cart') }}">Shoping Cart</a></li>
                                 <li><a href="{{ route('public.checkout') }}">Check Out</a></li>
+                                4
                             </ul>
                         </li>
-                        <li><a href="{{ route('public.contact') }}">About</a></li>
-                        <li><a href="{{ route('public.contact') }}">Contact</a></li>
+                        <li class="{{ Route::is('public.about') ? 'active' : '' }}"><a
+                                href="{{ route('public.about') }}">About</a></li>
+                        <li class="{{ Route::is('public.contact') ? 'active' : '' }}"><a
+                                href="{{ route('public.contact') }}">Contact</a></li>
                     </ul>
                 </nav>
             </div>
@@ -135,7 +166,14 @@
                         <li><a href="#"><i class="fa fa-heart"></i> <span>1</span></a></li>
                         <li>
                             <a href="{{ route('public.cart') }}">
-                                <i class="fa fa-shopping-bag"></i> <span>{{ App\Models\Cart::all()->count() }}</span>
+                                <i class="fa fa-shopping-bag"></i>
+                                @if (Auth::user() != null && Auth::user()->cart !== null)
+                                    @if (Auth::user()->cart->items->count() > 0)
+                                        <span>
+                                            {{ Auth::user()->cart->items->count() }}
+                                        </span>
+                                    @endif
+                                @endif
                             </a>
                         </li>
                     </ul>
@@ -149,56 +187,3 @@
     </div>
 </header>
 <!-- Header Section End -->
-
-<!-- Hero Section Begin -->
-<section class="hero hero-normal">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="hero__categories">
-                    <div class="hero__categories__all">
-                        <i class="fa fa-bars"></i>
-                        <span>All departments</span>
-                    </div>
-                    <ul>
-                        <li><a href="#">Fresh Meat</a></li>
-                        <li><a href="#">Vegetables</a></li>
-                        <li><a href="#">Fruit & Nut Gifts</a></li>
-                        <li><a href="#">Fresh Berries</a></li>
-                        <li><a href="#">Ocean Foods</a></li>
-                        <li><a href="#">Butter & Eggs</a></li>
-                        <li><a href="#">Fastfood</a></li>
-                        <li><a href="#">Fresh Onion</a></li>
-                        <li><a href="#">Papayaya & Crisps</a></li>
-                        <li><a href="#">Oatmeal</a></li>
-                        <li><a href="#">Fresh Bananas</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-9">
-                <div class="hero__search">
-                    <div class="hero__search__form">
-                        <form action="{{ route('public.grid') }}" method="GET">
-                            <div class="hero__search__categories">
-                                All Categories
-                                <span class="arrow_carrot-down"></span>
-                            </div>
-                            <input type="text" placeholder="What do yo u need?" name="search">
-                            <button type="submit" class="site-btn">SEARCH</button>
-                        </form>
-                    </div>
-                    <div class="hero__search__phone">
-                        <div class="hero__search__phone__icon">
-                            <i class="fa fa-phone"></i>
-                        </div>
-                        <div class="hero__search__phone__text">
-                            <h5>+65 11.188.888</h5>
-                            <span>support 24/7 time</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- Hero Section End -->

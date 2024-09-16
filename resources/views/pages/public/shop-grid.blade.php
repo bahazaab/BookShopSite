@@ -1,4 +1,5 @@
 <x-public-layout>
+<x-hero-section/>
     <!-- Breadcrumb Section Begin -->
     <section class="breadcrumb-section set-bg" data-setbg="img/breadcrumb.jpg">
         <div class="container">

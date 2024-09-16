@@ -58,8 +58,24 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
-    public function latestOrder(){
-        return $this->orders()->latest('date');
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
+
+    public function hasCart()
+    {
+        $NullCart = $this->cart ?? true;
+        if ($NullCart == true) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    public function latestOrder()
+    {
+        return $this->orders()->latest('date')->first();
     }
 
     public function settings()
